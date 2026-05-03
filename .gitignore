@@ -7,3 +7,4 @@
 *.a
 *.lib
 build/
+base_things/
