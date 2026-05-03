@@ -5,11 +5,14 @@
 #include <stdexcept>
 #include <string_view>
 #include <sstream>
+#include <algorithm>
 
 const std::string_view string {"----------\n"};
 
 enum class Command{
-    Add, Print, Find, Average, RemoveBad, Save, Load, Exit, Unknown
+    Add, Print, Find, Average, 
+    RemoveBad, Save, Load, Exit, 
+    Unknown, SortGrade, SortName
 };
 
 Command parseCommand(const std::vector<std::string>& tokens){
@@ -23,6 +26,8 @@ Command parseCommand(const std::vector<std::string>& tokens){
     if (line == "save") return Command::Save;
     if (line == "load") return Command::Load;
     if (line == "exit") return Command::Exit;
+    if (line == "sort_grade") return Command::SortGrade;
+    if (line == "sort_name") return Command::SortName;
     else return Command::Unknown;
 }
 
@@ -86,13 +91,13 @@ class Group{
         }
 
         void find(const std::string& name) const{
-            for (std::size_t i {}; i < group.size(); ++i){
-                if (group[i].getName() == name){
-                    std::cout << string << "Name: " << group[i].getName() << '\t'
-                    << "Age: " << group[i].getAge() << '\t' << '\t'
-                    << "Grade: " << group[i].getGrade() << '\n' << string;
-                    return;
-                }
+            auto nameParser = [name](const Student& x){return x.getName() == name;};
+            auto pointer = std::find_if(group.begin(), group.end(), nameParser);
+            if (pointer != group.end()){
+                std::cout << string << "Name: " << pointer->getName() << '\t'
+                << "Age: " << pointer->getAge() << '\t' << '\t'
+                << "Grade: " << pointer->getGrade() << '\n' << string;
+                return;
             }
             std::cout << string << "Student not found\n" << string;
         }
@@ -107,17 +112,14 @@ class Group{
         }
 
         void remove_bad(){
-            int count {};
-            std::size_t i {};
-            while (i < group.size()){
-                if (group[i].getGrade() < 3.) {
-                    group.erase(group.begin() + i);
-                    ++count;
-                }
-                else ++i;
+            auto belowAverage = [](const Student& x){return x.getGrade() < 3.;};
+            auto pointer = std::remove_if(group.begin(), group.end(), belowAverage);
+            if (pointer == group.end()){
+                std::cout << string << "There is no bad students\n" << string;
+                return;
             }
-            if (count > 0) std::cout << string << "Bad students removed\n" << string;
-            else std::cout << string << "There is no bad students\n" << string;
+            group.erase(pointer, group.end());
+            std::cout << string << "Bad students removed\n" << string;
         }
 
         void add_student(const std::string& name, int age, double grade){
@@ -138,6 +140,22 @@ class Group{
             catch (const std::exception& e) {
                 throw std::invalid_argument("Couldn`t load file");
             }
+        }
+
+        void sort_name(){
+            auto byName = [](const Student& x, const Student& y){
+                return x.getName() < y.getName();
+            };
+            std::sort(group.begin(), group.end(), byName);
+            std::cout << string << "Group sorted by name\n" << string;      
+        }
+
+        void sort_grade(){
+            auto byGrade = [](const Student& x, const Student& y){
+                return x.getGrade() < y.getGrade();
+            };
+            std::sort(group.begin(), group.end(), byGrade);
+            std::cout << string << "Group sorted by grade\n" << string;
         }
 };
 
@@ -233,6 +251,10 @@ void command_execution(const std::string& line, Group& group, bool& state){
         case Command::Save: CommandsExecution::save(tokens, group);
             break;
         case Command::Load: CommandsExecution::load(tokens, group);
+            break;
+        case Command::SortGrade: group.sort_grade();
+            break;
+        case Command::SortName: group.sort_name();
             break;
         case Command::Unknown: std::cout << string << "Unknown command\n" << string;
     }
