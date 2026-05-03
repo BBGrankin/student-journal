@@ -1,0 +1,26 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build C++ with GCC",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-std=c++20",
+                "-Wall",
+                "-Wextra",
+                "-pedantic",
+                "-g",
+                "main.cpp",
+                "-o",
+                "main.exe"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Build C++ file with GCC"
+        }
+    ]
+}
