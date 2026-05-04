@@ -7,12 +7,12 @@
 #include <sstream>
 #include <algorithm>
 
-const std::string_view string {"----------\n"};
+const std::string_view separator {"=====================\n"};
 
 enum class Command{
     Add, Print, Find, Average, 
     RemoveBad, Save, Load, Exit, 
-    Unknown, SortGrade, SortName
+    SortGrade, SortName, Unknown
 };
 
 Command parseCommand(const std::vector<std::string>& tokens){
@@ -71,16 +71,16 @@ class Group{
     public:
         void print() const{
             if (group.size() == 0){
-                std::cout << string << "There is no students in group\n" << string;
+                std::cout << separator << "There is no students in group\n" << separator;
                 return;
             }
-            std::cout << string;
+            std::cout << separator;
             for (std::size_t i {}; i < group.size(); ++i){
                 std::cout << "Name: " << group[i].getName() << '\t'
                 << "Age: " << group[i].getAge() << '\t' << '\t'
                 << "Grade: " << group[i].getGrade() << '\n';
             }
-            std::cout << string;
+            std::cout << separator;
         }
 
         void save_file(std::ofstream& file) const{
@@ -94,12 +94,12 @@ class Group{
             auto nameParser = [name](const Student& x){return x.getName() == name;};
             auto pointer = std::find_if(group.begin(), group.end(), nameParser);
             if (pointer != group.end()){
-                std::cout << string << "Name: " << pointer->getName() << '\t'
+                std::cout << separator << "Name: " << pointer->getName() << '\t'
                 << "Age: " << pointer->getAge() << '\t' << '\t'
-                << "Grade: " << pointer->getGrade() << '\n' << string;
+                << "Grade: " << pointer->getGrade() << '\n' << separator;
                 return;
             }
-            std::cout << string << "Student not found\n" << string;
+            std::cout << separator << "Student not found\n" << separator;
         }
 
         double averageGrade() const{
@@ -115,11 +115,11 @@ class Group{
             auto belowAverage = [](const Student& x){return x.getGrade() < 3.;};
             auto pointer = std::remove_if(group.begin(), group.end(), belowAverage);
             if (pointer == group.end()){
-                std::cout << string << "There is no bad students\n" << string;
+                std::cout << separator << "There is no bad students\n" << separator;
                 return;
             }
             group.erase(pointer, group.end());
-            std::cout << string << "Bad students removed\n" << string;
+            std::cout << separator << "Bad students removed\n" << separator;
         }
 
         void add_student(const std::string& name, int age, double grade){
@@ -147,7 +147,7 @@ class Group{
                 return x.getName() < y.getName();
             };
             std::sort(group.begin(), group.end(), byName);
-            std::cout << string << "Group sorted by name\n" << string;      
+            std::cout << separator << "Group sorted by name\n" << separator;      
         }
 
         void sort_grade(){
@@ -155,7 +155,7 @@ class Group{
                 return x.getGrade() < y.getGrade();
             };
             std::sort(group.begin(), group.end(), byGrade);
-            std::cout << string << "Group sorted by grade\n" << string;
+            std::cout << separator << "Group sorted by grade\n" << separator;
         }
 };
 
@@ -175,16 +175,16 @@ namespace CommandsExecution{
             if (age > 100 || age < 0) throw std::invalid_argument("Are u even human? Wrong age entered");
             if (grade > 5. || grade < 2.) throw std::invalid_argument("Wrong grade enetered 2.0 <= grade <= 5.0");
             group.add_student(tokens[1], age, grade);
-            std::cout << string << "Student added\n" << string;
+            std::cout << separator << "Student added\n" << separator;
         }
         catch(const std::exception& e){
-            std::cout << string << e.what() << '\n' << string;
+            std::cout << separator << e.what() << '\n' << separator;
         }
     }
 
     void find (const std::vector<std::string>& tokens, const Group& group){
         if (tokens.size() != 2){
-            std::cout << string << "Wrong number of parameters\n" << string;
+            std::cout << separator << "Wrong number of parameters\n" << separator;
             return;
         }
         group.find(tokens[1]);
@@ -192,38 +192,38 @@ namespace CommandsExecution{
 
     void save (const std::vector<std::string>& tokens, const Group& group){
         if (tokens.size() != 2){
-            std::cout << string << "Wrong number of parameters\n" << string;
+            std::cout << separator << "Wrong number of parameters\n" << separator;
             return;
         }
         std::ofstream file {tokens[1]};
         if (!file){
-            std::cout << string << "Couldn`t open file\n" << string;
+            std::cout << separator << "Couldn`t open file\n" << separator;
             return;
         }
         group.save_file(file);
         file.close();
-        std::cout << string << "Saved successfully\n" << string;
+        std::cout << separator << "Saved successfully\n" << separator;
     }
 
     void load (const std::vector<std::string>& tokens, Group& group){
         if (tokens.size() != 2){
-            std::cout << string << "Wrong number of parameters\n" << string;
+            std::cout << separator << "Wrong number of parameters\n" << separator;
             return;
         }
         std::ifstream file {tokens[1]};
         if (!file){
-            std::cout << string << "Couldn`t open file\n" << string;
+            std::cout << separator << "Couldn`t open file\n" << separator;
             return;
         }
         try {
             group.load_file(file);
         }
         catch(const std::exception& e) {
-            std::cerr << string << e.what() << '\n' << string;
+            std::cerr << separator << e.what() << '\n' << separator;
             return;
         }
         file.close();
-        std::cout << string << "Loaded successfully\n" << string;
+        std::cout << separator << "Loaded successfully\n" << separator;
     }
 }
 
@@ -242,7 +242,7 @@ void command_execution(const std::string& line, Group& group, bool& state){
             break;
         case Command::Find: CommandsExecution::find(tokens, group);
             break;
-        case Command::Average: std::cout << string << group.averageGrade() << '\n' << string;
+        case Command::Average: std::cout << separator << group.averageGrade() << '\n' << separator;
             break;
         case Command::RemoveBad: group.remove_bad();
             break;
@@ -256,7 +256,7 @@ void command_execution(const std::string& line, Group& group, bool& state){
             break;
         case Command::SortName: group.sort_name();
             break;
-        case Command::Unknown: std::cout << string << "Unknown command\n" << string;
+        case Command::Unknown: std::cout << separator << "Unknown command\n" << separator;
     }
 }
 
