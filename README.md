@@ -29,14 +29,14 @@ Console C++ practice project for managing a group of students.
 
 ## Example
 
-add Boris 21 4.5
-add Smith 20 4.8
-add Ivan 19 2.5
-print
-sort_grade
-print
-save data/students.txt
-exit
+- add Boris 21 4.5
+- add Smith 20 4.8
+- add Ivan 19 2.5
+- print
+- sort_grade
+- print
+- save data/students.txt
+- exit
 
 ## Build
 
@@ -60,15 +60,15 @@ Windows
 main.cpp
 
 include/
-    Student.h
-    Group.h
-    Command.h
-    Utils.h
+ - Student.h
+ - Group.h
+ - Command.h
+ - Utils.h
 
 source/
-    Student.cpp
-    Group.cpp
-    Command.cpp
+ - Student.cpp
+ - Group.cpp
+ - Command.cpp
 
 ## Notes
 
