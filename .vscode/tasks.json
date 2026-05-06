@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build C++ with GCC",
+            "label": "Build group manager",
             "type": "shell",
             "command": "g++",
             "args": [
@@ -12,15 +12,18 @@
                 "-pedantic",
                 "-g",
                 "main.cpp",
+                "source/Student.cpp",
+                "source/Group.cpp",
+                "source/Commands.cpp",
+                "-Iinclude",
                 "-o",
-                "main.exe"
+                "group_manager.exe"
             ],
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
             "problemMatcher": ["$gcc"],
-            "detail": "Build C++ file with GCC"
         }
     ]
 }
