@@ -41,8 +41,19 @@ Console C++ practice project for managing a group of students.
 ## Build
 
 ~~~bash
-g++ ./main.cpp source/Student.cpp source/Group.cpp source/Command.cpp -Iinclude -o group_manager
+make
 ~~~
+
+## Test
+~~~bash
+make test
+~~~
+
+## Clean
+~~~bash
+make clean
+~~~
+Works only on Linux and macOS, on Windows works in Git Bash
 
 ## Run
 
